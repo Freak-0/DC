@@ -1,0 +1,86 @@
+##server
+import socket
+import threading
+
+HOST = "0.0.0.0"
+PORT = 5000
+ADDR = (HOST, PORT)
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
+server.listen(5)
+print(f"[*] Listening on {HOST}:{PORT}")
+
+clients = []
+
+def broadcast(msg, source):
+    for client in clients:
+        if client != source:
+            try:
+                client.send(msg)
+            except:
+                client.close()
+                clients.remove(client)
+
+def handle(conn, addr):
+    print(f"[+] {addr} connected.")
+    clients.append(conn)
+
+    while True:
+        try:
+            data = conn.recv(1024)
+            if not data:
+                break
+            else:
+                print(f"[{addr}] {data.decode()}")
+                broadcast(data, conn)
+        except:
+            break
+
+    print(f"[-] {addr} disconnected.")
+    conn.close()
+    clients.remove(conn)
+
+def start():
+    while True:
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle, args=(conn, addr))
+        thread.start()
+
+print("[*] Server started.")
+start()
+
+##client
+import socket
+import threading
+
+HOST = "localhost"
+PORT = 5000
+ADDR = (HOST, PORT)
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+try:
+    client.connect(ADDR)
+    print("[+] Connected to the server.")
+
+    def receive_messages():
+        while True:
+                msg = client.recv(1024).decode()
+                print(f"\nReceived: {msg}")
+
+    # Start a thread to receive messages from the server
+    receive_thread = threading.Thread(target=receive_messages)
+    receive_thread.start()
+
+    while True:
+        msg = input("Client 1: Enter message: ")
+        client.send(msg.encode())
+
+except ConnectionRefusedError:
+    print("error")
+except Exception as e:
+    print(f"{e}")
+
+finally:
+    client.close()
