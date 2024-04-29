@@ -1,0 +1,33 @@
+#RPC/RMI
+from xmlrpc import server
+from adder import Adder, sayHello
+PORT = 4000
+try:
+    s = server.SimpleXMLRPCServer(addr=("127.0.0.1", PORT))
+    s.register_instance(Adder())
+    s.register_function(sayHello, "greet")
+    print("Server is Listening on ", s.server_address)
+    s.serve_forever()
+except KeyboardInterrupt as e:
+    s.server_close()
+    print("Disconnected")
+
+# client.py
+from xmlrpc import client
+c = client.ServerProxy("http://localhost:4000")
+print(c.greet("Prathamesh"))
+print(c.add(3, 4))
+print(c.mul(5, 2))
+print(c.sub(5, 5))
+
+# adder.py
+class Adder:
+    def add(self, x: int, y: int) -> int:
+        return x+y
+    def sub(self, x: int, y: int) -> int:
+        return x-y
+    def mul(self, x: int, y: int) -> int:
+        return x*y
+def sayHello(name: str) -> str:
+    return f"Hello from {name}"
+
