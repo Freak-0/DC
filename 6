@@ -1,0 +1,44 @@
+##server
+import socket
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = socket.gethostname()
+port=12345
+server.bind((host, port))
+server.listen(5)
+print(f"server is listnig to {host}:{port}")
+clients=[]
+CSA= True
+while True:
+    client, addr = server.accept()
+    print(f"got connection from {addr}")
+    if CSA:
+        CSA=False
+        client.send(b'1')
+        print(f"Access granted to {addr}")
+    else:
+        client.send(b'0')
+        print(f"acces denied to {addr}")
+    clients.append(client)
+    data= client.recv(1024)
+    if data.decode() == 'release':
+        CSA = True
+        print(f'CS released by {addr}')
+    clients.remove(client)
+    client.close()
+server.close()
+
+##client
+import socket
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = socket.gethostname()
+port = 12345
+client.connect((host, port))
+data= client.recv(1024)
+
+if data.decode() == '1':
+    print(f'Access granted to CS')
+    print('CS operation completed')
+    client.send(b'release')
+else:
+    print('Access denied')
+client.close()
