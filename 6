@@ -1,44 +1,45 @@
-##server
-import socket
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = socket.gethostname()
-port=12345
-server.bind((host, port))
-server.listen(5)
-print(f"server is listnig to {host}:{port}")
-clients=[]
-CSA= True
-while True:
-    client, addr = server.accept()
-    print(f"got connection from {addr}")
-    if CSA:
-        CSA=False
-        client.send(b'1')
-        print(f"Access granted to {addr}")
-    else:
-        client.send(b'0')
-        print(f"acces denied to {addr}")
-    clients.append(client)
-    data= client.recv(1024)
-    if data.decode() == 'release':
-        CSA = True
-        print(f'CS released by {addr}')
-    clients.remove(client)
-    client.close()
-server.close()
-
-##client
-import socket
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = socket.gethostname()
-port = 12345
-client.connect((host, port))
-data= client.recv(1024)
-
-if data.decode() == '1':
-    print(f'Access granted to CS')
-    print('CS operation completed')
-    client.send(b'release')
-else:
-    print('Access denied')
-client.close()
+##LB.java
+import java.util.Scanner;
+public class LB {
+  static void printLoad(int servers,int Processes){
+    int each = Processes/servers; int extra =
+    Processes%servers; int total = 0;
+    for(int i = 0; i < servers; i++){
+      if(extra-->0)
+        total = each+1;
+      else
+        total = each;
+    System.out.println("Server "+(char)('A'+i)+" has "+total+" Processes");
+  }
+}
+public static void main(String[] args){
+  Scanner sc = new Scanner(System.in);
+  System.out.print("Enter the number of servers and Processes:");
+  int servers = sc.nextInt(); 
+  int Processes = sc.nextInt();
+  while(true){
+    printLoad(servers, Processes);
+    System.out.print("1.Add Servers 2.Remove Servers 3.Add Processes 4.Remove Processes 5.Exit: ");
+    switch(sc.nextInt()) {
+      case 1:
+        System.out.print("How many more servers?: ");
+        servers+=sc.nextInt(); 
+        break;
+      case 2:
+      	System.out.print("How many servers to remove?:"); 
+        servers-=sc.nextInt();
+        break; 
+      case 3:
+        System.out.print("How many more Processes?: ");
+        Processes+=sc.nextInt(); 
+        break; 
+      case 4:
+        System.out.print("How many Processes to remove?: ");
+        Processes-=sc.nextInt();
+        break;
+      case 5:
+        return;
+      }
+    }
+  }
+}
