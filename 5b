@@ -7,9 +7,12 @@ def bully_algorithm():
 
     while active_processes:
         current_process = active_processes.pop(0)
-        print("Current active processes:", active_processes)
-        active_processes += [i + 1 for i in range(n) if priority[i] > priority[current_process - 1] and status[i] != 0]
+        next_processes = [i + 1 for i in range(n) if priority[i] > priority[current_process - 1] and status[i] != 0]
+        for next_process in next_processes:
+            print(f"Election message is sent from Process {current_process} to Process {next_process}")
+        active_processes += next_processes
         if active_processes:
             initiating_process = active_processes[0]
     print("The final coordinator is Process", initiating_process)
+
 bully_algorithm()
