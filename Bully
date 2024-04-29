@@ -1,51 +1,15 @@
-// #####BullyAlgorithm
-#include <bits/stdc++.h>
-using namespace std;
+def bully_algorithm():
+    n = int(input("Enter the number of processes: "))
+    priority = [int(input(f"Enter the priority for Process {i + 1}: ")) for i in range(n)]
+    status = [int(input(f"Enter the status for Process {i + 1}: ")) for i in range(n)]
+    initiating_process = int(input("Enter the initiating process: "))
+    active_processes = [initiating_process]
 
-int main(){
-    int number_of_processes;
-
-    cout<<"Enter the number of processes:\n";
-    cin>>number_of_processes;
-    vector<int> priority(number_of_processes);
-    vector<int> status(number_of_processes);
-
-    for(int i=0;i<number_of_processes;i++){
-        int temp_priority;
-        int temp_status;
-        cout<<"Enter the priority for Process "<<i+1<<"\n";
-        cin>>temp_priority;
-
-        cout<<"Enter the status:\n";
-        cin>>temp_status;
-
-        priority[i]=temp_priority;
-        status[i]=temp_status;
-    }
-    int initiating_process;
-    cout<<"Enter the initiating process\n";
-    cin>>initiating_process;
-
-    list<int> processes;
-    processes.push_back(initiating_process);
-    
-    while(processes.size()!=0){
-       processes.pop_front();
-       for(auto it: processes){
-            cout<<it<<" ";
-        }
-        cout<<endl;
-    for(int i=0;i<number_of_processes;i++){
-        if(priority[i]>priority[initiating_process-1]){
-        cout<<"Election message is sent from Process "<<initiating_process<<"to Process "<<i+1<<endl;
-        if(status[i]!=0){
-            processes.push_back(i+1);
-        }
-        }
-    }
-    if(processes.size()!=0){
-        initiating_process=processes.front();
-    }
-    }
-    cout<<"The final co-ordinator is Process "<<initiating_process<<"\n";
-}
+    while active_processes:
+        current_process = active_processes.pop(0)
+        print("Current active processes:", active_processes)
+        active_processes += [i + 1 for i in range(n) if priority[i] > priority[current_process - 1] and status[i] != 0]
+        if active_processes:
+            initiating_process = active_processes[0]
+    print("The final coordinator is Process", initiating_process)
+bully_algorithm()
