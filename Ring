@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int main(){
+    int n;
+    cout<<"Enter the number of processes\n";
+    cin>>n;
+
+    int failed=4;
+    cout<<"Process no. "<<failed<<" failed\n";
+
+    int initiator=2;
+    cout<<"Election initiated by "<<initiator<<"\n";
+    int last;
+    if(failed==n-1){
+        last=n-2;
+    }   
+    else{
+        last=n-1;
+    }
+
+    int counter=2;
+    int co_ordinator=initiator;
+    while(counter>0){
+        int round=0;
+        while(round!=n-1){
+            if(initiator==failed && initiator == n-1){
+                initiator=0;
+            }
+            else if(initiator==failed){
+                initiator++;
+            }
+            else {
+                if((initiator==last && co_ordinator!=0) || (initiator!=last && co_ordinator!=initiator+1))
+                cout<<"Process "<<initiator<<"pass election("<<initiator<<") to";
+                if(initiator==last){
+                    initiator=0;
+                }
+                else{
+                    initiator++;
+                }
+                cout<<initiator<<"\n";
+                round++;         
+            }
+        }
+        if(counter==2){
+            cout<<last<<" is the new co-ordinator\n";
+        }
+
+        initiator=last;
+        co_ordinator=last;
+        counter --;
+
+    }
+    cout<<"End of election"<<"\n";
+
+}
